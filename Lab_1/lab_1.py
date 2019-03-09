@@ -5,11 +5,11 @@ ALPHABET_LEN = len(ALPHABET)
 
 
 def char_to_code(char: str) -> int:
-    return ord(char) - ord('А')
+    return ALPHABET.index(char)
 
 
 def code_to_char(code: int) -> str:
-    return chr(code + ord('А'))
+    return ALPHABET[code]
 
 
 def vigenere_encrypt(plain_text: str, key: str) -> str:
@@ -37,8 +37,11 @@ def matrix_det(matrix_2x2) -> int:
 
 
 def hill_check_args(text: str, key_matrix_2x2):
-    if matrix_det(key_matrix_2x2) == 0:
+    det = matrix_det(key_matrix_2x2)
+    if det == 0:
         raise ValueError('Key has null determinant')
+    if egcd(det, len(ALPHABET))[0] != 1:
+        raise ValueError('(det(key), 33) != 1')
     if len(text) % 2 != 0:
         raise ValueError('Length of text must be divisible by 2')
 
@@ -118,7 +121,7 @@ def test_vigenere_decrypt():
 
 def hill_read_data(filename: str):
     input_file = open(filename, 'r', encoding='utf8')
-    text = input_file.readline()[0:-1]
+    text = input_file.readline().strip()
     key_matrix = []
     for line in input_file.readlines():
         key_matrix.append(list(map(int, line.split())))
